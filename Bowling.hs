@@ -59,6 +59,20 @@ getNextRolls _ _ = undefined
 runTests :: [[Int]] -> [Int] -> Bool
 runTests tests solns = map score tests == solns
 
+toString :: [Frame] -> String
+toString [] = ""
+toString (Strike:xs) = 'X':' ':(toString xs)
+toString ((Complete a b):xs)
+  | a + b == 10 = show a ++ "/" ++ toString xs
+  | otherwise   = show a ++ show b ++ toString xs
+toString ((Partial a):xs) = show a ++ toString xs
+
+runStringTests :: [[Frame]] -> [String] -> Bool
+runStringTests frames solns = map toString frames == solns
+
+runTests' :: Eq b => (a -> b) -> [a] -> [b] -> Bool
+runTests' fn args solns = map fn args == solns
+
 main = print $ runTests [ []
                         , [1,2,3,4]
                         , [7,3,8,1]
