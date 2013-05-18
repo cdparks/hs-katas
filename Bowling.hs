@@ -23,6 +23,23 @@ score ls = loop $ toFrames ls where
     loop [Complete x y] = x + y
     loop [Partial x]    = x
     loop [Strike]       = 10
-    loop (x:y:ys) = undefined
+    loop (x:xs)         = (case x of
+                            Complete a b -> let c = a + b in c + 
+                                            (if c == 10
+                                            then getNextRolls 1 xs
+                                            else 0)
+                            Partial a    -> a
+                            Strike       -> 10 + getNextRolls 2 xs) + loop xs
 
-
+getNextRolls :: Int -> [Frame] -> Int
+getNextRolls _ []     = 0
+getNextRolls 1 (x:xs) = case x of
+                          Complete a b -> a
+                          Partial a    -> a
+                          Strike       -> 10
+getNextRolls 2 (Strike:x:xs) = 10 + getNextRolls 1 (x:xs)
+getNextRolls 2 (x:xs) = case x of
+                          Complete a b -> a + b
+                          Partial  a   -> a
+                          Strike       -> 10
+getNextRolls _ _ = undefined
