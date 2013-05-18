@@ -5,10 +5,6 @@ data Frame = Complete Int Int
            | Strike
              deriving Show
 
-data Mode = Normal
-          | Bonus
-            deriving Show
-
 toFrames :: [Int] -> [Frame]
 toFrames []     = []
 toFrames [10]   = [Strike]
