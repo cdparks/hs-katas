@@ -23,25 +23,27 @@ score ls = loop $ toFrames ls where
     loop [Complete x y] = x + y
     loop [Partial x]    = x
     loop [Strike]       = 10
-    loop (x:xs)         = (case x of
-                            Complete a b -> let c = a + b in c + 
-                                            (if c == 10
-                                            then getNextRolls 1 xs
-                                            else 0)
-                            Partial a    -> a
-                            Strike       -> 10 + getNextRolls 2 xs) + loop xs
+    loop (x:xs)         = frameScore xs x + loop xs
+
+frameScore :: [Frame] -> Frame -> Int
+frameScore _ (Partial a) = a
+frameScore xs Strike     = 10 + getNextRolls 2 xs
+frameScore xs (Complete a b) = current + next where
+    current = a + b
+    next | current == 10 = getNextRolls 1 xs
+         | otherwise     = 0
 
 getNextRolls :: Int -> [Frame] -> Int
 getNextRolls _ []     = 0
 getNextRolls 1 (x:xs) = case x of
-                          Complete a b -> a
-                          Partial a    -> a
-                          Strike       -> 10
+    Complete a _ -> a
+    Partial a    -> a
+    Strike       -> 10
 getNextRolls 2 (Strike:x:xs) = 10 + getNextRolls 1 (x:xs)
 getNextRolls 2 (x:xs) = case x of
-                          Complete a b -> a + b
-                          Partial  a   -> a
-                          Strike       -> 10
+    Complete a b -> a + b
+    Partial  a   -> a
+    Strike       -> 10
 getNextRolls _ _ = undefined
 
 runTests :: [[Int]] -> [Int] -> Bool
