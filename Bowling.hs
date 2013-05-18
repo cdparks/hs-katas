@@ -43,3 +43,8 @@ getNextRolls 2 (x:xs) = case x of
                           Partial  a   -> a
                           Strike       -> 10
 getNextRolls _ _ = undefined
+
+runTests :: [[Int]] -> [Int] -> Bool
+runTests tests solns = map score tests == solns
+
+main = print $ runTests [[], [1,2,3,4], [7,3,8,1], [10,8,1], [1,2,3], [7,3], [10], [10,3]] [0, 10, 27, 28, 6, 10, 10, 16]
