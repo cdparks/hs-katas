@@ -67,6 +67,15 @@ toString ((Complete a b):xs)
   | otherwise   = show a ++ show b ++ toString xs
 toString ((Partial a):xs) = show a ++ toString xs
 
+fromString :: String -> [Frame]
+fromString ""         = []
+fromString [x]        = [Partial (read [x] :: Int)]
+fromString ('X':' ':xs)  = Strike : fromString xs
+fromString (a:'/':xs) = let firstRoll = read [a] :: Int in
+                        (Complete firstRoll (10 - firstRoll)) : fromString xs
+fromString (a:b:xs)   = let (firstRoll, secondRoll) = (read [a] :: Int, read [b] :: Int) in
+                        (Complete firstRoll secondRoll) : fromString xs
+
 runStringTests :: [[Frame]] -> [String] -> Bool
 runStringTests frames solns = map toString frames == solns
 
